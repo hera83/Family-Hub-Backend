@@ -32,6 +32,11 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0
 
 WORKDIR /app
 
+# curl is used by container health checks
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends curl \
+  && rm -rf /var/lib/apt/lists/*
+
 # Copy published application from builder
 COPY --from=builder /build/publish .
 
