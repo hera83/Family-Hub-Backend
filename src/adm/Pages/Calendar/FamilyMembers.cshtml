@@ -1,0 +1,65 @@
+@page
+@model FamilyHub.Adm.Pages.Calendar.FamilyMembersModel
+@{
+    ViewData["Title"] = "Familiemedlemmer";
+}
+
+<div class="page-header mb-3">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+        <div>
+            <h1 class="h3 mb-1">Familiemedlemmer</h1>
+            <p class="text-muted mb-0">Administrer familiemedlemmer, som bruges i kalenderbegivenheder.</p>
+        </div>
+        <a class="btn btn-primary" asp-page="/Calendar/FamilyMemberCreate">Opret familiemedlem</a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="h5 mb-3">Liste</h2>
+
+        @if (!string.IsNullOrWhiteSpace(Model.LoadErrorMessage))
+        {
+            <div class="alert alert-danger" role="alert">@Model.LoadErrorMessage</div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th>Navn</th>
+                    <th>Farve</th>
+                    <th class="text-end">Handlinger</th>
+                </tr>
+                </thead>
+                <tbody>
+                @if (Model.Items.Count == 0)
+                {
+                    <tr>
+                        <td colspan="3" class="text-muted">Ingen familiemedlemmer fundet.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>
+                                <span class="d-inline-flex align-items-center gap-2">
+                                    <span class="rounded-circle border" style="display:inline-block;width:14px;height:14px;background-color:@item.Color"></span>
+                                    <span>@item.Color</span>
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-secondary" asp-page="/Calendar/FamilyMemberEdit" asp-route-id="@item.Id">Rediger</a>
+                                <a class="btn btn-sm btn-outline-danger" asp-page="/Calendar/FamilyMemberDelete" asp-route-id="@item.Id">Slet</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

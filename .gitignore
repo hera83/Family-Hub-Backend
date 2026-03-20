@@ -1,0 +1,28 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.vscode/
+
+## SQLite database files
+*.db
+*.db-shm
+*.db-wal
+
+## Published output
+publish/
+out/
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Rider
+.idea/
+
+## Environment files with secrets
+.env
+.env.local
+.env.*.local

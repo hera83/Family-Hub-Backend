@@ -1,0 +1,84 @@
+version: '3.9'
+
+services:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # FamilyHub API Service
+  # ─────────────────────────────────────────────────────────────────────────────
+  api:
+    container_name: familyhub-api
+    build:
+      context: .
+      dockerfile: src/api/Dockerfile
+    ports:
+      - "5000:8080"  # Map host port 5000 to container port 8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      # Database configuration
+      - Database__Path=/data/familyhub.db
+      # API Key configuration
+      - ApiKey__HeaderName=x-api-key
+      - ApiKey__Key=${API_KEY:-dev-api-key-12345}
+      # CORS configuration (include ADM URL and any frontend URLs)
+      - Cors__AllowedOrigins__0=http://localhost:5001
+      - Cors__AllowedOrigins__1=http://localhost:3000
+      - Cors__AllowedOrigins__2=http://localhost:5173
+      # Swagger
+      - Swagger__EnableInProduction=true
+      # Logging
+      - Logging__LogLevel__Default=Information
+      - Logging__LogLevel__Microsoft.AspNetCore=Warning
+      - Logging__LogLevel__Microsoft.EntityFrameworkCore=Warning
+    volumes:
+      - familyhub-data:/data  # Persistent SQLite database storage
+    networks:
+      - familyhub-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # FamilyHub Admin (ADM) Service
+  # ─────────────────────────────────────────────────────────────────────────────
+  adm:
+    container_name: familyhub-adm
+    build:
+      context: .
+      dockerfile: src/adm/Dockerfile
+    ports:
+      - "5001:8080"  # Map host port 5001 to container port 8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      # FamilyHub API configuration
+      # Use 'api' (container name) to reach the API via Docker network
+      - FamilyHubApi__BaseUrl=http://api:8080/
+      - FamilyHubApi__ApiKeyHeaderName=x-api-key
+      - FamilyHubApi__ApiKey=${API_KEY:-dev-api-key-12345}
+      # Logging
+      - Logging__LogLevel__Default=Information
+      - Logging__LogLevel__Microsoft.AspNetCore=Warning
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - familyhub-network
+    restart: unless-stopped
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Volumes
+# ─────────────────────────────────────────────────────────────────────────────
+volumes:
+  familyhub-data:
+    driver: local
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Networks
+# ─────────────────────────────────────────────────────────────────────────────
+networks:
+  familyhub-network:
+    driver: bridge

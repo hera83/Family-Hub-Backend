@@ -1,0 +1,94 @@
+@page
+@model FamilyHub.Adm.Pages.ImportExport.ImportResultModel
+@{
+    ViewData["Title"] = "Import – resultat";
+    var allSuccess = Model.Result is { Failed: 0, TotalRead: > 0 };
+    var hasFailures = Model.Result is { Failed: > 0 };
+}
+
+<div class="page-header mb-3 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+    <div>
+        <h1 class="h3 mb-1">Import – resultat</h1>
+        <p class="text-muted mb-0">
+            @if (Model.Result is not null)
+            {
+                <span>@Model.Result.DisplayName</span>
+            }
+        </p>
+    </div>
+    <a asp-page="/ImportExport/Import" class="btn btn-outline-secondary">Ny import</a>
+</div>
+
+@if (Model.SessionExpiredMessage is not null)
+{
+    <div class="alert alert-warning">@Model.SessionExpiredMessage</div>
+}
+else if (Model.Result is null)
+{
+    <div class="alert alert-danger">Ingen resultatdata. <a asp-page="/ImportExport/Import">Prøv igen</a>.</div>
+}
+else
+{
+    @* Summary card *@
+    <div class="card shadow-sm mb-3 border-@(allSuccess ? "success" : hasFailures ? "warning" : "secondary")">
+        <div class="card-header bg-@(allSuccess ? "success" : hasFailures ? "warning" : "light") @(allSuccess || hasFailures ? "bg-opacity-10" : "")">
+            <strong>
+                @if (allSuccess)
+                { <text>Import fuldført</text> }
+                else if (Model.Result.TotalRead == 0)
+                { <text>Ingen rækker behandlet</text> }
+                else
+                { <text>Import fuldført med @Model.Result.Failed fejl</text> }
+            </strong>
+        </div>
+        <div class="card-body">
+            <div class="row g-3 text-center">
+                <div class="col-6 col-md-3">
+                    <div class="fs-3 fw-bold">@Model.Result.TotalRead</div>
+                    <div class="small text-muted">Rækker læst</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="fs-3 fw-bold text-success">@Model.Result.Created</div>
+                    <div class="small text-muted">Oprettet</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="fs-3 fw-bold text-primary">@Model.Result.Updated</div>
+                    <div class="small text-muted">Opdateret</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="fs-3 fw-bold @(Model.Result.Failed > 0 ? "text-danger" : "")">@Model.Result.Failed</div>
+                    <div class="small text-muted">Fejl</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Row-level error details *@
+    @if (Model.Result.Errors.Count > 0)
+    {
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger bg-opacity-10">
+                <strong>Fejl pr. række</strong>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th style="width:80px">Linje</th>
+                            <th>Fejlbesked</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var err in Model.Result.Errors)
+                        {
+                            <tr>
+                                <td>@err.RowNumber</td>
+                                <td>@err.Message</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+}

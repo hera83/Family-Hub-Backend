@@ -1,0 +1,88 @@
+@page
+@model FamilyHub.Adm.Pages.Recipes.IndexModel
+@{
+    ViewData["Title"] = "Opskrifter";
+}
+
+<div class="page-header mb-3">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+        <div>
+            <h1 class="h3 mb-1">Opskrifter</h1>
+            <p class="text-muted mb-0">Soeg i opskrifter og aabn detaljer med ingredienser.</p>
+        </div>
+        <a class="btn btn-primary" asp-page="/Recipes/RecipeCreate">Opret opskrift</a>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <h2 class="h5 mb-3">Soeg</h2>
+        <form method="get" class="row g-3">
+            <div class="col-12 col-md-6">
+                <label class="form-label" asp-for="Search">Titel</label>
+                <input asp-for="Search" class="form-control" placeholder="Soeg efter opskrift" />
+            </div>
+            <div class="col-12 col-md-4">
+                <label class="form-label" asp-for="CategoryId">Kategori</label>
+                <select asp-for="CategoryId" asp-items="Model.CategoryOptions" class="form-select">
+                    <option value="">Alle kategorier</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-2 d-flex align-items-end">
+                <button class="btn btn-outline-primary w-100" type="submit">Soeg</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="h5 mb-3">Liste</h2>
+
+        @if (!string.IsNullOrWhiteSpace(Model.LoadErrorMessage))
+        {
+            <div class="alert alert-danger" role="alert">@Model.LoadErrorMessage</div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th>Titel</th>
+                    <th>Kategori</th>
+                    <th>Forberedelse (min)</th>
+                    <th>Ventetid (min)</th>
+                    <th>Favorit</th>
+                    <th class="text-end">Handlinger</th>
+                </tr>
+                </thead>
+                <tbody>
+                @if (Model.Items.Count == 0)
+                {
+                    <tr>
+                        <td colspan="6" class="text-muted">Ingen opskrifter fundet.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.Title</td>
+                            <td>@(item.RecipeCategoryName ?? "-")</td>
+                            <td>@(item.PrepTimeMinutes?.ToString() ?? "-")</td>
+                            <td>@(item.WaitTimeMinutes?.ToString() ?? "-")</td>
+                            <td>@(item.IsFavorite ? "Ja" : "Nej")</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-secondary" asp-page="/Recipes/RecipeDetails" asp-route-id="@item.Id">Detaljer</a>
+                                <a class="btn btn-sm btn-outline-secondary" asp-page="/Recipes/RecipeEdit" asp-route-id="@item.Id">Rediger</a>
+                                <a class="btn btn-sm btn-outline-danger" asp-page="/Recipes/RecipeDelete" asp-route-id="@item.Id">Slet</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

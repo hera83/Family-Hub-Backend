@@ -1,0 +1,49 @@
+@page "{id:guid}"
+@model FamilyHub.Adm.Pages.Catalog.ProductDetailsModel
+@{
+    ViewData["Title"] = "Produktdetaljer";
+}
+
+<div class="page-header mb-3 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+    <div>
+        <h1 class="h3 mb-1">Produktdetaljer</h1>
+        <p class="text-muted mb-0">Detaljeret visning af produktets data.</p>
+    </div>
+    @if (Model.Product is not null)
+    {
+        <a class="btn btn-outline-secondary" asp-page="/Catalog/ProductEdit" asp-route-id="@Model.Product.Id">Rediger</a>
+    }
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        @if (!string.IsNullOrWhiteSpace(Model.LoadErrorMessage))
+        {
+            <div class="alert alert-danger" role="alert">@Model.LoadErrorMessage</div>
+        }
+        else if (Model.Product is null)
+        {
+            <p class="text-muted mb-0">Produktet blev ikke fundet.</p>
+        }
+        else
+        {
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Navn</dt><dd class="col-sm-9">@Model.Product.Name</dd>
+                <dt class="col-sm-3">Kategori</dt><dd class="col-sm-9">@(Model.Product.ItemCategoryName ?? "-")</dd>
+                <dt class="col-sm-3">Beskrivelse</dt><dd class="col-sm-9">@(Model.Product.Description ?? "-")</dd>
+                <dt class="col-sm-3">Billede URL</dt><dd class="col-sm-9">@(Model.Product.ImageUrl ?? "-")</dd>
+                <dt class="col-sm-3">Enhed</dt><dd class="col-sm-9">@(Model.Product.Unit ?? "-")</dd>
+                <dt class="col-sm-3">Stoerrelse</dt><dd class="col-sm-9">@(Model.Product.SizeLabel ?? "-")</dd>
+                <dt class="col-sm-3">Pris</dt><dd class="col-sm-9">@Model.FormatPrice(Model.Product.Price)</dd>
+                <dt class="col-sm-3">Manuel</dt><dd class="col-sm-9">@(Model.Product.IsManual ? "Ja" : "Nej")</dd>
+                <dt class="col-sm-3">Favorit</dt><dd class="col-sm-9">@(Model.Product.IsFavorite ? "Ja" : "Nej")</dd>
+                <dt class="col-sm-3">Basisvare</dt><dd class="col-sm-9">@(Model.Product.IsStaple ? "Ja" : "Nej")</dd>
+                <dt class="col-sm-3">Kalorier pr. 100 g</dt><dd class="col-sm-9">@(Model.Product.CaloriesPer100g?.ToString("0.##") ?? "-")</dd>
+                <dt class="col-sm-3">Fedt pr. 100 g</dt><dd class="col-sm-9">@(Model.Product.FatPer100g?.ToString("0.##") ?? "-")</dd>
+                <dt class="col-sm-3">Kulhydrat pr. 100 g</dt><dd class="col-sm-9">@(Model.Product.CarbsPer100g?.ToString("0.##") ?? "-")</dd>
+                <dt class="col-sm-3">Protein pr. 100 g</dt><dd class="col-sm-9">@(Model.Product.ProteinPer100g?.ToString("0.##") ?? "-")</dd>
+                <dt class="col-sm-3">Fiber pr. 100 g</dt><dd class="col-sm-9">@(Model.Product.FiberPer100g?.ToString("0.##") ?? "-")</dd>
+            </dl>
+        }
+    </div>
+</div>

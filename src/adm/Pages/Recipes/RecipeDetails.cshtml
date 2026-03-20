@@ -1,0 +1,88 @@
+@page "{id:guid}"
+@model FamilyHub.Adm.Pages.Recipes.RecipeDetailsModel
+@{
+    ViewData["Title"] = "Opskrift detaljer";
+}
+
+<div class="page-header mb-3 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+    <div>
+        <h1 class="h3 mb-1">Opskrift detaljer</h1>
+        <p class="text-muted mb-0">Fuld visning af opskrift samt ingredienser.</p>
+    </div>
+    <div class="d-flex gap-2">
+        @if (Model.View.Recipe.Id.HasValue)
+        {
+            <a class="btn btn-outline-secondary" asp-page="/Recipes/RecipeEdit" asp-route-id="@Model.View.Recipe.Id">Rediger opskrift</a>
+            <a class="btn btn-primary" asp-page="/Recipes/IngredientCreate" asp-route-recipeId="@Model.View.Recipe.Id">Tilfoej ingrediens</a>
+        }
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(Model.LoadErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">@Model.LoadErrorMessage</div>
+}
+else
+{
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <h2 class="h5 mb-3">Opskrift</h2>
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Titel</dt><dd class="col-sm-9">@Model.View.Recipe.Title</dd>
+                <dt class="col-sm-3">Kategori</dt><dd class="col-sm-9">@(Model.View.Recipe.RecipeCategoryName ?? "-")</dd>
+                <dt class="col-sm-3">Billede URL</dt><dd class="col-sm-9">@(Model.View.Recipe.ImageUrl ?? "-")</dd>
+                <dt class="col-sm-3">Beskrivelse</dt><dd class="col-sm-9">@(Model.View.Recipe.Description ?? "-")</dd>
+                <dt class="col-sm-3">Forberedelse</dt><dd class="col-sm-9">@(Model.View.Recipe.PrepTimeMinutes?.ToString() ?? "-") min</dd>
+                <dt class="col-sm-3">Ventetid</dt><dd class="col-sm-9">@(Model.View.Recipe.WaitTimeMinutes?.ToString() ?? "-") min</dd>
+                <dt class="col-sm-3">Manual</dt><dd class="col-sm-9">@(Model.View.Recipe.IsManual ? "Ja" : "Nej")</dd>
+                <dt class="col-sm-3">Favorit</dt><dd class="col-sm-9">@(Model.View.Recipe.IsFavorite ? "Ja" : "Nej")</dd>
+                <dt class="col-sm-3">Fremgangsmaade</dt><dd class="col-sm-9"><div style="white-space: pre-wrap;">@(Model.View.Recipe.Instructions ?? "-")</div></dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h2 class="h5 mb-3">Ingredienser</h2>
+            <div class="table-responsive">
+                <table class="table table-sm table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Produkt</th>
+                            <th>Navn</th>
+                            <th>Maengde</th>
+                            <th>Enhed</th>
+                            <th>Basisvare</th>
+                            <th>Sortering</th>
+                            <th class="text-end">Handlinger</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @if (Model.View.Ingredients.Count == 0)
+                    {
+                        <tr><td colspan="7" class="text-muted">Ingen ingredienser endnu.</td></tr>
+                    }
+                    else
+                    {
+                        foreach (var ingredient in Model.View.Ingredients.OrderBy(x => x.SortOrder).ThenBy(x => x.Name))
+                        {
+                            <tr>
+                                <td>@(ingredient.ProductName ?? "-")</td>
+                                <td>@(ingredient.Name ?? "-")</td>
+                                <td>@(ingredient.Quantity?.ToString("0.##") ?? "-")</td>
+                                <td>@(ingredient.Unit ?? "-")</td>
+                                <td>@(ingredient.IsStaple ? "Ja" : "Nej")</td>
+                                <td>@ingredient.SortOrder</td>
+                                <td class="text-end">
+                                    <a class="btn btn-sm btn-outline-secondary" asp-page="/Recipes/IngredientEdit" asp-route-recipeId="@ingredient.RecipeId" asp-route-ingredientId="@ingredient.Id">Rediger</a>
+                                    <a class="btn btn-sm btn-outline-danger" asp-page="/Recipes/IngredientDelete" asp-route-recipeId="@ingredient.RecipeId" asp-route-ingredientId="@ingredient.Id">Slet</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

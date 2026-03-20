@@ -1,0 +1,259 @@
+@page
+@model FamilyHub.Adm.Pages.ImportExport.IndexModel
+@{
+    ViewData["Title"] = "Import/Eksport";
+}
+
+<div class="page-header mb-3">
+    <h1 class="h3 mb-1">Import/Eksport</h1>
+    <p class="text-muted mb-0">Hent Excel-filer med data fra FamilyHub.Api, eller upload nye data til import via API.</p>
+</div>
+
+<partial name="_AlertMessages" />
+
+<div class="row g-3">
+    <div class="col-12 col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body d-flex flex-column">
+                <h2 class="h5 mb-1">Import</h2>
+                <p class="text-muted mb-3">Upload en Excel-fil, se et preview med validering, og importer data via API. Understøtter oprettelse og opdatering.</p>
+                <div class="mt-auto">
+                    <a asp-page="/ImportExport/Import" class="btn btn-primary">Gå til import</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5 mb-3">Eksport</h2>
+                <p class="text-muted">Alle filer genereres i adm-projektet ud fra API-data. Ingen direkte databaseadgang.</p>
+
+                <div class="row g-2">
+                    <div class="col-12 col-md-6">
+                        <form method="post" asp-page-handler="ExportFamilyMembers">
+                            <button class="btn btn-outline-secondary w-100" type="submit">Familiemedlemmer</button>
+                        </form>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <form method="post" asp-page-handler="ExportCalendarEvents">
+                            <button class="btn btn-outline-secondary w-100" type="submit">Kalenderbegivenheder</button>
+                        </form>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <form method="post" asp-page-handler="ExportItemCategories">
+                            <button class="btn btn-outline-secondary w-100" type="submit">Madvarekategorier</button>
+                        </form>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <form method="post" asp-page-handler="ExportProducts">
+                            <button class="btn btn-outline-secondary w-100" type="submit">Madvarer</button>
+                        </form>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <form method="post" asp-page-handler="ExportRecipeCategories">
+                            <button class="btn btn-outline-secondary w-100" type="submit">Opskriftskategorier</button>
+                        </form>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <form method="post" asp-page-handler="ExportRecipes">
+                            <button class="btn btn-outline-secondary w-100" type="submit">Opskrifter</button>
+                        </form>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <form method="post" asp-page-handler="ExportRecipeIngredients">
+                            <button class="btn btn-outline-secondary w-100" type="submit">Opskriftsingredienser</button>
+                        </form>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <form method="post" asp-page-handler="ExportOrders">
+                            <button class="btn btn-outline-secondary w-100" type="submit">Ordrer</button>
+                        </form>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <form method="post" asp-page-handler="ExportOrderLines">
+                            <button class="btn btn-outline-secondary w-100" type="submit">Ordrelinjer</button>
+                        </form>
+                    </div>
+                </div>
+
+                <hr class="my-3" />
+
+                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+                    <div>
+                        <span class="fw-semibold">Samlet workbook</span>
+                        <span class="text-muted small d-block">Alle datasæt i ét Excel-dokument</span>
+                    </div>
+                    <form method="post" asp-page-handler="ExportWorkbook">
+                        <button class="btn btn-primary" type="submit">Hent samlet workbook</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-3">
+    <div class="card-header">
+        <h2 class="h5 mb-0">Import-templates</h2>
+    </div>
+    <div class="card-body">
+        <p class="text-muted mb-3">
+            Download en tom Excel-template for den datatype du vil importere. Hver template indeholder korrekte kolonneoverskrifter,
+            en eksempelrække og et <strong>Hjælp</strong>-ark med feltforklaring og import-regler.
+            Har du eksisterende data, kan du i stedet bruge <strong>Eksport</strong> ovenfor og redigere filen direkte.
+        </p>
+        <p class="text-muted small mb-3">
+            <strong>Bemærk:</strong> Orders/OrderLines er historiske snapshots og understøttes kun til eksport i v1 (ingen import).
+        </p>
+
+        <div class="mb-2">
+            <span class="badge me-1" style="background-color:#FFD966;color:#333;">Påkrævet</span>
+            <span class="badge me-1" style="background-color:#9DC3E6;color:#333;">Id / FK-ref.</span>
+            <span class="badge me-1" style="background-color:#EDEDED;color:#333;">Valgfrit</span>
+            <span class="badge" style="background-color:#BFBFBF;color:#333;">Ignoreret</span>
+            <span class="text-muted small ms-2">– svarer til farveerne i template-arkets kolonneoverskrifter</span>
+        </div>
+
+        <div class="row g-2 mt-1">
+            <div class="col-12 col-md-6 col-lg-4">
+                <form method="post" asp-page-handler="DownloadTemplateFamilyMembers">
+                    <button class="btn btn-outline-primary w-100" type="submit">
+                        <i class="bi bi-file-earmark-arrow-down me-1"></i>Familiemedlemmer
+                    </button>
+                </form>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <form method="post" asp-page-handler="DownloadTemplateCalendarEvents">
+                    <button class="btn btn-outline-primary w-100" type="submit">
+                        <i class="bi bi-file-earmark-arrow-down me-1"></i>Kalenderbegivenheder
+                    </button>
+                </form>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <form method="post" asp-page-handler="DownloadTemplateItemCategories">
+                    <button class="btn btn-outline-primary w-100" type="submit">
+                        <i class="bi bi-file-earmark-arrow-down me-1"></i>Madvarekategorier
+                    </button>
+                </form>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <form method="post" asp-page-handler="DownloadTemplateProducts">
+                    <button class="btn btn-outline-primary w-100" type="submit">
+                        <i class="bi bi-file-earmark-arrow-down me-1"></i>Madvarer
+                    </button>
+                </form>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <form method="post" asp-page-handler="DownloadTemplateRecipeCategories">
+                    <button class="btn btn-outline-primary w-100" type="submit">
+                        <i class="bi bi-file-earmark-arrow-down me-1"></i>Opskriftskategorier
+                    </button>
+                </form>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <form method="post" asp-page-handler="DownloadTemplateRecipes">
+                    <button class="btn btn-outline-primary w-100" type="submit">
+                        <i class="bi bi-file-earmark-arrow-down me-1"></i>Opskrifter
+                    </button>
+                </form>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <form method="post" asp-page-handler="DownloadTemplateRecipeIngredients">
+                    <button class="btn btn-outline-primary w-100" type="submit">
+                        <i class="bi bi-file-earmark-arrow-down me-1"></i>Opskriftsingredienser
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-3">
+    <div class="card-header">
+        <h2 class="h5 mb-0">Sådan virker import</h2>
+    </div>
+    <div class="card-body">
+        <div class="accordion" id="importHelpAccordion">
+
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#helpFlow">
+                        Importflow – trin for trin
+                    </button>
+                </h3>
+                <div id="helpFlow" class="accordion-collapse collapse" data-bs-parent="#importHelpAccordion">
+                    <div class="accordion-body">
+                        <ol class="mb-0">
+                            <li><strong>Download en template</strong> (eller eksporter eksisterende data) og udfyld den i Excel.</li>
+                            <li>Gå til <a asp-page="/ImportExport/Import">Import-siden</a>, vælg datatype og upload filen.</li>
+                            <li>Et <strong>preview</strong> vises med alle rækker og validering. Fejlrækker markeres, men stopper ikke import af de øvrige.</li>
+                            <li>Bekræft importen – systemet kalder API'et og opretter eller opdaterer poster.</li>
+                            <li>Et <strong>resultat</strong>-overblik viser oprettede, opdaterede og eventuelle fejlrækker.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#helpUpsert">
+                        Oprettelse vs. opdatering (upsert via Id)
+                    </button>
+                </h3>
+                <div id="helpUpsert" class="accordion-collapse collapse" data-bs-parent="#importHelpAccordion">
+                    <div class="accordion-body">
+                        <ul class="mb-0">
+                            <li><strong>Ny post:</strong> Lad <code>Id</code>-feltet stå tomt. Systemet opretter automatisk en ny post med et nyt GUID.</li>
+                            <li><strong>Opdater eksisterende post:</strong> Angiv det eksisterende GUID i <code>Id</code>-feltet. Systemet opdaterer den matchende post i stedet for at oprette en ny.</li>
+                            <li>Id-feltet er altid <em>valgfrit</em> – du behøver aldrig angive det, medmindre du vil opdatere en bestemt post.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#helpFK">
+                        FK-felter og navne-opslag
+                    </button>
+                </h3>
+                <div id="helpFK" class="accordion-collapse collapse" data-bs-parent="#importHelpAccordion">
+                    <div class="accordion-body">
+                        <p>Mange rækker refererer til andre poster via et FK-id (fx <code>ItemCategoryId</code> på en madvarerække).
+                           For hvert FK-felt er der typisk et tilhørende tekst-felt (fx <code>ItemCategoryName</code>).</p>
+                        <ul class="mb-0">
+                            <li>Angiver du et GUID i FK-feltet, bruges det direkte.</li>
+                            <li>Er FK-feltet tomt, men tekst-feltet udfyldt, slår systemet teksten op og finder GUID'et automatisk.</li>
+                            <li>Lookup-arkene i template-filerne indeholder de aktuelle GUID'er du kan kopiere ind.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#helpErrors">
+                        Hvad sker der ved fejl?
+                    </button>
+                </h3>
+                <div id="helpErrors" class="accordion-collapse collapse" data-bs-parent="#importHelpAccordion">
+                    <div class="accordion-body">
+                        <ul class="mb-0">
+                            <li><strong>Valideringsfejl</strong> (manglende påkrævede felter, ugyldig dato/tid osv.) opdages i preview-fasen. Rækken markeres og springes over ved import.</li>
+                            <li><strong>API-fejl</strong> (fx duplikeret navn, ukendt FK-id) registreres per række under selve importen og vises i resultatsiden.</li>
+                            <li>Fejl i én række påvirker <em>ikke</em> andre rækker – de øvrige importeres stadig.</li>
+                            <li>Ingen ændringer rulles tilbage. Poster der allerede er oprettet forbliver i databasen selv om efterfølgende rækker fejler.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

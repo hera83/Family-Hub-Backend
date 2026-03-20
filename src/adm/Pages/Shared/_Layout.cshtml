@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FamilyHub.Adm</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/adm.styles.css" asp-append-version="true" />
+</head>
+<body>
+    @{
+        var currentPage = ViewContext.ActionDescriptor.RouteValues["page"] ?? string.Empty;
+        string IsActive(string pathPrefix)
+            => currentPage.StartsWith(pathPrefix, StringComparison.OrdinalIgnoreCase) ? "active" : string.Empty;
+    }
+
+    <header>
+        <nav class="navbar navbar-expand-lg admin-navbar border-bottom shadow-sm mb-4">
+            <div class="container-fluid container-xl">
+                <a class="navbar-brand fw-semibold" asp-area="" asp-page="/Index">FamilyHub Adm</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav flex-wrap gap-1 me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link @IsActive("/Index")" asp-area="" asp-page="/Index">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @IsActive("/Calendar/FamilyMembers")" asp-area="" asp-page="/Calendar/FamilyMembers">Familiemedlemmer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @IsActive("/Calendar/Events")" asp-area="" asp-page="/Calendar/Events">Kalenderbegivenheder</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @IsActive("/Catalog/Categories")" asp-area="" asp-page="/Catalog/Categories">Madvarekategorier</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @IsActive("/Catalog/Products")" asp-area="" asp-page="/Catalog/Products">Madvarer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @IsActive("/Recipes/Categories")" asp-area="" asp-page="/Recipes/Categories">Opskriftskategorier</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(currentPage.StartsWith("/Recipes", StringComparison.OrdinalIgnoreCase) && !currentPage.StartsWith("/Recipes/Categor", StringComparison.OrdinalIgnoreCase) ? "active" : string.Empty)" asp-area="" asp-page="/Recipes/Index">Opskrifter</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @IsActive("/Orders")" asp-area="" asp-page="/Orders/Index">Ordrer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @IsActive("/ImportExport")" asp-area="" asp-page="/ImportExport/Index">Import/Eksport</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container-xl pb-4">
+        <partial name="_AlertMessages" />
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted py-3 mt-4">
+        <div class="container-xl small">
+            &copy; 2026 - FamilyHub.Adm
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

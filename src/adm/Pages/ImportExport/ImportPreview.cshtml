@@ -1,0 +1,139 @@
+@page
+@model FamilyHub.Adm.Pages.ImportExport.ImportPreviewModel
+@{
+    ViewData["Title"] = "Import – preview";
+}
+
+<div class="page-header mb-3 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+    <div>
+        <h1 class="h3 mb-1">Import – preview</h1>
+        <p class="text-muted mb-0">
+            @if (Model.Preview is not null)
+            {
+                <span>@Model.Preview.DisplayName</span>
+            }
+        </p>
+    </div>
+    <a asp-page="/ImportExport/Import" class="btn btn-outline-secondary">Tilbage til upload</a>
+</div>
+
+@if (Model.SessionExpiredMessage is not null)
+{
+    <div class="alert alert-warning">@Model.SessionExpiredMessage <a asp-page="/ImportExport/Import">Upload igen</a>.</div>
+}
+else if (Model.Preview is null)
+{
+    <div class="alert alert-danger">Ingen previewdata. <a asp-page="/ImportExport/Import">Upload filen igen</a>.</div>
+}
+else
+{
+    @* Summary card *@
+    <div class="row g-3 mb-3">
+        <div class="col-6 col-md-3">
+            <div class="card border-0 bg-light text-center py-3">
+                <div class="fs-3 fw-bold">@Model.Preview.TotalRows</div>
+                <div class="small text-muted">Rækker i alt</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 bg-success bg-opacity-10 text-center py-3">
+                <div class="fs-3 fw-bold text-success">@Model.Preview.ValidRows</div>
+                <div class="small text-muted">Gyldige</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 @(Model.Preview.InvalidRows > 0 ? "bg-danger bg-opacity-10" : "bg-light") text-center py-3">
+                <div class="fs-3 fw-bold @(Model.Preview.InvalidRows > 0 ? "text-danger" : "")">@Model.Preview.InvalidRows</div>
+                <div class="small text-muted">Med fejl</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 d-flex align-items-center justify-content-center">
+            @if (Model.Preview.ValidRows > 0)
+            {
+                <form method="post" asp-page-handler="Execute">
+                    <input type="hidden" name="cacheKey" value="@Model.CacheKey" />
+                    <button type="submit" class="btn btn-primary">
+                        Importér @Model.Preview.ValidRows gyldige rækker
+                    </button>
+                </form>
+            }
+            else
+            {
+                <span class="text-muted small">Ingen gyldige rækker at importere.</span>
+            }
+        </div>
+    </div>
+
+    @* Validation errors *@
+    @if (Model.Preview.InvalidRows > 0)
+    {
+        <div class="card shadow-sm mb-3 border-danger">
+            <div class="card-header bg-danger bg-opacity-10">
+                <strong>Valideringsfejl (@Model.Preview.InvalidRows rækker)</strong> — disse rækker springes over ved import
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    @foreach (var row in Model.Preview.Rows.Where(r => !r.IsValid).Take(50))
+                    {
+                        <li class="list-group-item py-2">
+                            <span class="badge bg-secondary me-2">Linje @row.RowNumber</span>
+                            @string.Join(" • ", row.Errors)
+                        </li>
+                    }
+                    @if (Model.Preview.Rows.Count(r => !r.IsValid) > 50)
+                    {
+                        <li class="list-group-item text-muted small py-2">... og flere fejl</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+
+    @* Data preview table *@
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.85rem;">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width:60px">Linje</th>
+                            <th style="width:80px">Status</th>
+                            @foreach (var header in Model.TableHeaders)
+                            {
+                                <th>@header</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in Model.DisplayRows)
+                        {
+                            <tr class="@(row.IsValid ? "" : "table-danger")">
+                                <td class="text-muted">@row.RowNumber</td>
+                                <td>
+                                    @if (row.IsValid)
+                                    {
+                                        <span class="badge bg-success">OK</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger" title="@string.Join(" | ", row.Errors)">Fejl</span>
+                                    }
+                                </td>
+                                @foreach (var col in row.DisplayColumns)
+                                {
+                                    <td>@col.Value</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @if (Model.HasMoreRowsThanDisplayed)
+            {
+                <div class="p-3 text-muted small border-top">
+                    Viser de første 150 rækker. Alle @Model.Preview.TotalRows rækker behandles ved import.
+                </div>
+            }
+        </div>
+    </div>
+}

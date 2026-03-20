@@ -1,0 +1,36 @@
+@page
+@model FamilyHub.Adm.Pages.Catalog.CategoryCreateModel
+@{
+    ViewData["Title"] = "Opret madvarekategori";
+}
+
+<div class="page-header mb-3">
+    <h1 class="h3 mb-1">Opret madvarekategori</h1>
+    <p class="text-muted mb-0">Tilfoej en ny kategori til kataloget.</p>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <partial name="_FormValidationSummary" />
+        <form method="post" class="row g-3">
+            <div class="col-12 col-md-8">
+                <label asp-for="Input.Name" class="form-label"></label>
+                <input asp-for="Input.Name" class="form-control" />
+                <span asp-validation-for="Input.Name" class="text-danger"></span>
+            </div>
+            <div class="col-12 col-md-4">
+                <label asp-for="Input.SortOrder" class="form-label"></label>
+                <input asp-for="Input.SortOrder" class="form-control" type="number" min="0" />
+                <span asp-validation-for="Input.SortOrder" class="text-danger"></span>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Gem</button>
+                <a asp-page="/Catalog/Categories" class="btn btn-outline-secondary">Annuller</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

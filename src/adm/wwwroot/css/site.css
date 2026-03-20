@@ -1,0 +1,79 @@
+:root {
+  --adm-bg: #f7f8fa;
+  --adm-surface: #ffffff;
+  --adm-border: #e6e9ef;
+  --adm-text: #1f2937;
+  --adm-muted: #6b7280;
+  --adm-primary: #0f4c81;
+}
+
+html {
+  font-size: 15px;
+}
+
+body {
+  background-color: var(--adm-bg);
+  color: var(--adm-text);
+}
+
+.admin-navbar {
+  background-color: var(--adm-surface);
+  border-color: var(--adm-border) !important;
+}
+
+.navbar-brand {
+  color: var(--adm-primary);
+  letter-spacing: 0.2px;
+}
+
+.navbar .nav-link {
+  border-radius: 0.5rem;
+  color: var(--adm-text);
+  padding: 0.45rem 0.75rem;
+}
+
+.navbar .nav-link:hover {
+  background-color: #edf2f7;
+}
+
+.navbar .nav-link.active {
+  background-color: #dce9f5;
+  color: #0b3f6e;
+  font-weight: 600;
+}
+
+.page-header p {
+  color: var(--adm-muted);
+}
+
+.card {
+  border-color: var(--adm-border);
+}
+
+.table > :not(caption) > * > * {
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+}
+
+.form-control,
+.form-select {
+  border-color: #d1d5db;
+}
+
+.form-control:focus,
+.form-select:focus,
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(15, 76, 129, 0.2);
+  border-color: #89a8c5;
+}
+
+.alert {
+  border-width: 1px;
+}
+
+.footer {
+  background-color: transparent;
+}

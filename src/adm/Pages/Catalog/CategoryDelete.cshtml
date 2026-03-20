@@ -1,0 +1,34 @@
+@page "{id:guid}"
+@model FamilyHub.Adm.Pages.Catalog.CategoryDeleteModel
+@{
+    ViewData["Title"] = "Slet madvarekategori";
+}
+
+<div class="page-header mb-3">
+    <h1 class="h3 mb-1">Slet madvarekategori</h1>
+    <p class="text-muted mb-0">Bekraeft at du vil slette denne kategori.</p>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        @if (Model.Item is null)
+        {
+            <p class="text-muted mb-0">Kategorien blev ikke fundet.</p>
+        }
+        else
+        {
+            <dl class="row mb-4">
+                <dt class="col-sm-3">Navn</dt>
+                <dd class="col-sm-9">@Model.Item.Name</dd>
+                <dt class="col-sm-3">Sortering</dt>
+                <dd class="col-sm-9">@Model.Item.SortOrder</dd>
+            </dl>
+
+            <form method="post">
+                <input type="hidden" asp-for="Item.Id" />
+                <button class="btn btn-danger" type="submit">Ja, slet</button>
+                <a asp-page="/Catalog/Categories" class="btn btn-outline-secondary">Annuller</a>
+            </form>
+        }
+    </div>
+</div>

@@ -1,0 +1,65 @@
+@page "{recipeId:guid}/{ingredientId:guid}"
+@model FamilyHub.Adm.Pages.Recipes.IngredientEditModel
+@{
+    ViewData["Title"] = "Rediger ingrediens";
+}
+
+<div class="page-header mb-3">
+    <h1 class="h3 mb-1">Rediger ingrediens</h1>
+    <p class="text-muted mb-0">Opdater ingrediensens data under opskriften.</p>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="alert alert-info">Mindst en af felterne Produkt eller Ingrediensnavn skal udfyldes.</div>
+        <partial name="_FormValidationSummary" />
+
+        <form method="post" class="row g-3">
+            <input type="hidden" asp-for="Input.Id" />
+            <input type="hidden" asp-for="Input.RecipeId" />
+
+            <div class="col-12 col-md-6">
+                <label asp-for="Input.ProductId" class="form-label"></label>
+                <select asp-for="Input.ProductId" asp-items="Model.ProductOptions" class="form-select">
+                    <option value="">Ingen produktreference</option>
+                </select>
+                <span asp-validation-for="Input.ProductId" class="text-danger"></span>
+            </div>
+            <div class="col-12 col-md-6">
+                <label asp-for="Input.Name" class="form-label"></label>
+                <input asp-for="Input.Name" class="form-control" />
+                <span asp-validation-for="Input.Name" class="text-danger"></span>
+            </div>
+            <div class="col-6 col-md-3">
+                <label asp-for="Input.Quantity" class="form-label"></label>
+                <input asp-for="Input.Quantity" class="form-control" type="number" min="0" step="0.01" />
+                <span asp-validation-for="Input.Quantity" class="text-danger"></span>
+            </div>
+            <div class="col-6 col-md-3">
+                <label asp-for="Input.Unit" class="form-label"></label>
+                <input asp-for="Input.Unit" class="form-control" />
+                <span asp-validation-for="Input.Unit" class="text-danger"></span>
+            </div>
+            <div class="col-6 col-md-3">
+                <label asp-for="Input.SortOrder" class="form-label"></label>
+                <input asp-for="Input.SortOrder" class="form-control" type="number" min="0" />
+                <span asp-validation-for="Input.SortOrder" class="text-danger"></span>
+            </div>
+            <div class="col-6 col-md-3 d-flex align-items-end">
+                <div class="form-check">
+                    <input asp-for="Input.IsStaple" class="form-check-input" />
+                    <label asp-for="Input.IsStaple" class="form-check-label"></label>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Gem aendringer</button>
+                <a asp-page="/Recipes/RecipeDetails" asp-route-id="@Model.Input.RecipeId" class="btn btn-outline-secondary">Annuller</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

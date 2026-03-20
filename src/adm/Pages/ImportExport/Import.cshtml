@@ -1,0 +1,80 @@
+@page
+@model FamilyHub.Adm.Pages.ImportExport.ImportModel
+@{
+    ViewData["Title"] = "Import – upload";
+}
+
+<div class="page-header mb-3">
+    <h1 class="h3 mb-1">Import</h1>
+    <p class="text-muted mb-0">Upload en Excel-fil og få et preview, inden data importeres via API.</p>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <partial name="_FormValidationSummary" />
+
+        <form method="post" enctype="multipart/form-data" class="row g-3">
+            <div class="col-12 col-md-5">
+                <label asp-for="SelectedImportType" class="form-label fw-semibold">Datatype</label>
+                <select asp-for="SelectedImportType" asp-items="Model.ImportTypeOptions" class="form-select">
+                    <option value="">-- Vælg datatype --</option>
+                </select>
+                <span asp-validation-for="SelectedImportType" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-5">
+                <label for="importFile" class="form-label fw-semibold">Excel-fil (.xlsx)</label>
+                <input id="importFile" name="importFile" type="file" accept=".xlsx" class="form-control" />
+            </div>
+
+            <div class="col-12 col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Analyser</button>
+            </div>
+        </form>
+
+        <hr class="mt-4 mb-3" />
+        <div class="alert alert-info mb-0">
+            <strong>Tip:</strong> Har du ikke en fil endnu?
+            Download en <a asp-page="/ImportExport/Index">Import-template</a> med korrekte kolonner og en eksempelrække,
+            eller eksporter eksisterende data og rediger dem direkte.
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-3">
+    <div class="card-header">
+        <h2 class="h5 mb-0">Hurtig guide</h2>
+    </div>
+    <div class="card-body small">
+        <div class="row g-3">
+            <div class="col-12 col-md-6">
+                <p class="fw-semibold mb-1">Ny post</p>
+                <p class="text-muted mb-0">Lad <code>Id</code>-kolonnens celle stå tom. Systemet opretter en ny post med et nyt GUID.</p>
+            </div>
+            <div class="col-12 col-md-6">
+                <p class="fw-semibold mb-1">Opdater eksisterende post</p>
+                <p class="text-muted mb-0">Angiv det eksisterende GUID i <code>Id</code>-feltet. Systemet opdaterer den matchende post i stedet for at oprette en ny.</p>
+            </div>
+            <div class="col-12 col-md-6">
+                <p class="fw-semibold mb-1">FK-referencefelter</p>
+                <p class="text-muted mb-0">
+                    Felter som <code>ItemCategoryId</code> og <code>ItemCategoryName</code> er alternative. Angiv enten GUID eller navn –
+                    systemet finder det rigtige Id automatisk.
+                    Lookup-arkene i templates indeholder de aktuelle GUID'er.
+                </p>
+            </div>
+            <div class="col-12 col-md-6">
+                <p class="fw-semibold mb-1">Fejlhåndtering</p>
+                <p class="text-muted mb-0">
+                    Rækker med valideringsfejl vises i preview og springes over ved import.
+                    API-fejl pr. række vises i resultatoversigten.
+                    Fejl i én række stopper <em>ikke</em> de øvrige rækker.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

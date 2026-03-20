@@ -1,0 +1,60 @@
+@page
+@model FamilyHub.Adm.Pages.Catalog.CategoriesModel
+@{
+    ViewData["Title"] = "Madvarekategorier";
+}
+
+<div class="page-header mb-3">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+        <div>
+            <h1 class="h3 mb-1">Madvarekategorier</h1>
+            <p class="text-muted mb-0">Struktur for katalogets kategorier og sortering.</p>
+        </div>
+        <a class="btn btn-primary" asp-page="/Catalog/CategoryCreate">Opret kategori</a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="h5 mb-3">Liste</h2>
+
+        @if (!string.IsNullOrWhiteSpace(Model.LoadErrorMessage))
+        {
+            <div class="alert alert-danger" role="alert">@Model.LoadErrorMessage</div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th>Navn</th>
+                    <th>Sortering</th>
+                    <th class="text-end">Handlinger</th>
+                </tr>
+                </thead>
+                <tbody>
+                @if (Model.Items.Count == 0)
+                {
+                    <tr>
+                        <td colspan="3" class="text-muted">Ingen kategorier fundet.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.SortOrder</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-secondary" asp-page="/Catalog/CategoryEdit" asp-route-id="@item.Id">Rediger</a>
+                                <a class="btn btn-sm btn-outline-danger" asp-page="/Catalog/CategoryDelete" asp-route-id="@item.Id">Slet</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

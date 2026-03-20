@@ -1,0 +1,85 @@
+@page
+@model FamilyHub.Adm.Pages.Orders.IndexModel
+@{
+    ViewData["Title"] = "Ordrer";
+}
+
+<div class="page-header mb-3">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+        <div>
+            <h1 class="h3 mb-1">Ordrer</h1>
+            <p class="text-muted mb-0">Se historiske ordrer, PDF-status og detaljer.</p>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <h2 class="h5 mb-3">Filter</h2>
+        <form method="get" class="row g-3">
+            <div class="col-12 col-md-4">
+                <label class="form-label" asp-for="Status">Status</label>
+                <select asp-for="Status" asp-items="Model.StatusOptions" class="form-select">
+                    <option value="">Alle statusser</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-2 d-flex align-items-end">
+                <button class="btn btn-outline-primary w-100" type="submit">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="h5 mb-3">Liste</h2>
+
+        @if (!string.IsNullOrWhiteSpace(Model.LoadErrorMessage))
+        {
+            <div class="alert alert-danger" role="alert">@Model.LoadErrorMessage</div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Oprettet</th>
+                    <th>Status</th>
+                    <th>Antal varer</th>
+                    <th>Totalpris</th>
+                    <th>PDF</th>
+                    <th class="text-end">Handlinger</th>
+                </tr>
+                </thead>
+                <tbody>
+                @if (Model.Items.Count == 0)
+                {
+                    <tr>
+                        <td colspan="7" class="text-muted">Ingen ordrer fundet.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td><span class="font-monospace">@Model.ShortId(item.Id)</span></td>
+                            <td>@Model.FormatUtc(item.CreatedAtUtc)</td>
+                            <td>@item.Status</td>
+                            <td>@item.TotalItems</td>
+                            <td>@Model.FormatPrice(item.TotalPrice)</td>
+                            <td>@(item.HasPdf ? "Ja" : "Nej")</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-secondary" asp-page="/Orders/Details" asp-route-id="@item.Id">Detaljer</a>
+                                <a class="btn btn-sm btn-outline-secondary" asp-page="/Orders/Pdf" asp-route-id="@item.Id">PDF-info</a>
+                                <a class="btn btn-sm btn-outline-danger" asp-page="/Orders/Delete" asp-route-id="@item.Id">Slet</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
